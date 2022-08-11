@@ -1,11 +1,5 @@
 from csv_import_functions import *
-
-
-# DB settings
-host = 'strong-data.cnzuwg8ioub5.us-east-1.rds.amazonaws.com'
-dbname = 'postgres'
-user = 'daviddugas'
-password = '20Duffle$'
+from env import *
 
 #Settings
 dataset_dir = 'datasets'
