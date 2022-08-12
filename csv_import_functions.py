@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 import psycopg2
+from datetime import datetime
 
 # -------------------------------------------------------------
 # Find CSV files in my current working directory
@@ -121,3 +122,18 @@ def upload_to_db(host, dbname, user,password, tbl_name, col_str, file, dataframe
 
     cursor.close()
     print(f'table {tbl_name} imported to db complete')
+
+    # -----------------------------------------------------------------------------------------------
+
+def change_dirname_del_csv(csv_files, dataset_dir):
+    new_dir = os.path.join(
+        os.getcwd(), 
+        datetime.now().strftime(f'%Y-%m-%d_%H-%M-%S_{dataset_dir}'))
+    try:
+        os.rename(dataset_dir, new_dir)
+    except:
+        pass
+    for csv in csv_files:
+        rm_file = "rm '{0}' {1}".format(csv, new_dir)
+        os.system(rm_file)
+    return

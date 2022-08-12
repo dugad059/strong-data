@@ -24,4 +24,4 @@ for k in csv_files:
     upload_to_db(host, dbname, user,password, tbl_name, col_str,file=k, dataframe=dataframe , dataframe_columns=dataframe.columns)
 
 
-
+change_dirname_del_csv(csv_files, dataset_dir)
