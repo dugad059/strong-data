@@ -57,7 +57,7 @@ def create_df(dataset_dir, csv_files):
 def clean_tbl_name(filename):
 
     clean_tbl_name = filename.lower().replace(" ","_").replace("?", '').replace("-","_").replace(r"/","_").replace("\\","_").replace("%","").replace(")","").replace(r"(","").replace("&","")
-
+ 
     # Removes .csv from the clean_tbl_name
     tbl_name = '{0}'.format(clean_tbl_name.split('.')[0])
     
@@ -125,15 +125,8 @@ def upload_to_db(host, dbname, user,password, tbl_name, col_str, file, dataframe
 
     # -----------------------------------------------------------------------------------------------
 
-def change_dirname_del_csv(csv_files, dataset_dir):
-    new_dir = os.path.join(
-        os.getcwd(), 
-        datetime.now().strftime(f'%Y-%m-%d_%H-%M-%S_{dataset_dir}'))
-    try:
-        os.rename(dataset_dir, new_dir)
-    except:
-        pass
+def del_csv(csv_files):
     for csv in csv_files:
-        rm_file = "rm '{0}' {1}".format(csv, new_dir)
+        rm_file = "rm {0}".format(csv)
         os.system(rm_file)
     return

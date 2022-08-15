@@ -1,8 +1,9 @@
 from csv_import_functions import *
 from env import *
+from datetime import datetime
 
 #Settings
-dataset_dir = 'datasets'
+dataset_dir = datetime.now().strftime(f'%Y-%m-%d_%H-%M-%S_stongdata')
 
 # Configure Environment and create main df
 csv_files = csv_files()
@@ -24,4 +25,4 @@ for k in csv_files:
     upload_to_db(host, dbname, user,password, tbl_name, col_str,file=k, dataframe=dataframe , dataframe_columns=dataframe.columns)
 
 
-change_dirname_del_csv(csv_files, dataset_dir)
+del_csv(csv_files)
