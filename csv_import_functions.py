@@ -1,7 +1,6 @@
 import os
 import pandas as pd
 import psycopg2
-from datetime import datetime
 
 # -------------------------------------------------------------
 # Find CSV files in my current working directory
@@ -56,6 +55,7 @@ def create_df(dataset_dir, csv_files):
 # Cleans table and column names for postgre
 def clean_tbl_name(filename):
 
+    # Cleans table names for postgre 
     clean_tbl_name = filename.lower().replace(" ","_").replace("?", '').replace("-","_").replace(r"/","_").replace("\\","_").replace("%","").replace(")","").replace(r"(","").replace("&","")
  
     # Removes .csv from the clean_tbl_name
@@ -67,10 +67,10 @@ def clean_tbl_name(filename):
 
 def clean_colname(dataframe):
 
- # Cleans table and column names for postgre 
+ # Cleans column names for postgre 
     dataframe.columns = [x.lower().replace(" ","_").replace("?", '').replace("-","_").replace(r"/","_").replace("\\","_").replace("%","").replace(")","").replace(r"(","").replace("&","") for x in dataframe.columns] 
 
-    # Replacement dictionary that maps pandds dtypes to sql dtypes
+    # Replacement dictionary that maps pandas dtypes to sql dtypes
     replacements = {
         'object' : 'varchar',
         'float64' : 'float',
