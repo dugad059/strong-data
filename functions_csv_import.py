@@ -1,6 +1,8 @@
 import os
 import pandas as pd
 import psycopg2
+from env import *
+import boto3
 
 # -------------------------------------------------------------
 # Find CSV files in my current working directory
@@ -85,6 +87,7 @@ def clean_colname(dataframe):
     return col_str, dataframe.columns
 
 # -----------------------------------------------------------------------------------------------
+ 
  # Connection to DB
 def upload_to_db(host, dbname, user,password, tbl_name, col_str, file, dataframe, dataframe_columns):
     # Opens a database connection
@@ -105,7 +108,7 @@ def upload_to_db(host, dbname, user,password, tbl_name, col_str, file, dataframe
 
     # Opens the csv file and saves it as an object
     my_file = open(file)
-
+    
     # Uploads CSV to db
     SQL_STATEMENT = '''
     COPY %s FROM STDIN WITH
@@ -123,10 +126,43 @@ def upload_to_db(host, dbname, user,password, tbl_name, col_str, file, dataframe
     cursor.close()
     print(f'table {tbl_name} imported to db complete')
 
-    # -----------------------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------------------------
 
-def del_csv(csv_files):
+# Loads CSVs in S#
+def upload_folder_to_s3(dataset_dir, s3bucket, aws_dir):
+    s3_client = boto3.client('s3', 
+                            aws_access_key_id = ACCESS_KEY,
+                            aws_secret_access_key = SECRET_KEY,
+                            region_name = REGION_NAME )
+    
+    # Created a dates stamped folder
+    # s3_client.put_object(Bucket='strongdata', Key=(dataset_dir))
+    # print('Successfully created Folder')
+    
+    # Transfer files to new folder in S3
+    pbar = (os.walk(dataset_dir))
+    for path, subdirs,files in pbar:
+        for file in files:
+            dest_path = path.replace(dataset_dir, "").replace(os.sep, '/')
+            s3_file = f'{aws_dir}/{dest_path}/{file}'.replace('//', '/')
+            local_file = os.path.join(path, file)
+            s3_client.upload_file(local_file, s3bucket, s3_file)
+    print(f"Successfully uploaded {dataset_dir} to S3 {aws_dir}")
+
+# -----------------------------------------------------------------------------------------------
+
+# Deletes new directory and CSVs from memory
+def del_csv_dir(csv_files, dataset_dir):
+    #Deletes new directory
+    try:
+        rmdir = 'rm -r {0}'.format(dataset_dir)
+        os.system(rmdir)
+    except:
+        pass
+    
+    #Deletes CSVs
     for csv in csv_files:
         rm_file = "rm {0}".format(csv)
         os.system(rm_file)
     return
+
